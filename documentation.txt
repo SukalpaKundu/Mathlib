@@ -1,0 +1,373 @@
+Fortran Mathematical Library
+Sukalpa Kundu
+email at sukalpa.k123@gmail.com for bugs report.
+
+Some routines like sorting, inverting matrix or finding determinant are taken from various websites and modified for ease of use.
+
+***All variables used are double precision in nature.
+
+***Works only in linux platform.
+
+***Linear Algenbra routines requires **gnuplot** and **gnu octave** to be preinstalled in machine.
+
+Instructions for use:
+
+To set the library up, run "gfortran -c lib.f90 -o lib", after navigating to the folder containing the "lib.f90" file.
+This will create two files, "lib" and "mathlib.mod".
+To use the routines in program, at the beginning of program, write use mathlib.
+Always place the two files "lib" and "mathlib.mod" at the folder where the original program will be executed.
+To compile a file named "file.f90" using this library, write the command "gfortran file.f90 lib" and then execute.
+
+
+
+
+
+
+1.integration(intlib)
+
+function has i variables, last j variables to be integrated. Function be f(x1,x2,x3)( here i=3 ) and x3(hence j=1 ) to be integrated from a to b,
+using defined stepsize ; intij(f,x1,x2,a,b,stepsize)
+
+using relative error : int"i"r"j"(f,x1,x2,a,b,error) where i=3,j=1
+
+using absolute error : int"i"a"j"(f,x1,x2,a,b,error) ,,
+
+for f(x1,x2,x3,x4),hence i=4; x3 from ax3,bx3 and x4 from ax4 to bx4, hence j=2,
+
+defined stepsize : int42(f,x1,x2,ax3,bx3,ax4,bx4,stepsize)
+
+defined relative error : int4r2(f,x1,x2,ax3,bx3,ax4,bx4,error)
+
+defined absolute error : int4a2(f,x1,x2,ax3,bx3,ax4,bx4,error)
+
+Support only upto i=5 and j=3.
+
+
+Used method: Simpson 3/8th method with automated stepsize adjustment.
+
+2.differentiation(diflib)
+
+d"i""j"
+
+i=no of variables in the program
+j=order of differentiation
+h=stepsize
+
+For example,
+for f(x), i=1
+d12(f,x,h) gives derivative of f at x=x.
+
+for f(x,y), i=2
+d210(f,x,y,h) gives first derivative wrt x.
+d211(f,x,y,h) gives first derivative wrt y and first derivative wrt y.
+
+Support only upto i=3 and j=2(02, 11 or 20)
+
+Used method: five point approximation.
+
+
+3.Plot(plotlib)
+****option is a character that specifies the gnuplot plotting style(l/p/lp.. for 2d plot, surface/l.. for 3d plot etc).
+for plotting with function
+
+i.plotf2(f,xi,xf,h,option)
+Plots f(x) from xi to xf with increment h with gnuplot plotting option.
+ii.plotf3(f,xi,xf,yi,yf,h,option)
+Plots f(x,y) from xi to xf, yi to yf with increment h with gnuplot plotting option.
+iii.denplotf2(f,xi,xf,yi,yf,h)
+Creates densityplot of f(x,y) from xi to xf, yi to yf with increment h.
+
+for plotting with arrays
+
+i.plota2(x,y,option)
+Plots {x,y} sets of points stored as arrays(x(:),y(:)) with gnuplot plotting option.
+ii.plota3(x,y,z,option)
+Plots {x,y,z} sets of points stored as arrays(x(:),y(:),z(:)) with gnuplot plotting option.
+iii.denplota2(x,y,z)
+Creates densityplot of {x,y,z} sets of points stored as arrays(x(:),y(:),z(:)).
+
+for plotting with datafile:
+
+i.plotd2(filename,a,b,option)
+filename=name of datafile(string).
+a,b are gnuplot's plot using a:b(integer).
+Plots a graph of {x,y} points stored in datafile with gnuplot plotting option.
+
+ii.plotd3(filename,a,b,c,option)
+filename=name of datafile(string).
+a,b,c are gnuplot's plot using a:b:c(integer).
+Plots a 3D graph of {x,y,z} points stored in datafile with gnuplot plotting option.
+
+iii.denplotd2(filename,a,b,c,option)
+filename=name of datafile(string)
+a,b,c are gnuplot's plot using a:b:c(integer)
+Plots a density of {x,y,z} points stored in datafile with gnuplot plotting option.
+
+iv.subroutine plot_trajectory2(filename,a,b,nl,slow)
+Plots trajectory of a point saved as in datafile using a:b as x,y(1,2).
+filename=file at which data is stored.
+a,b are integers
+nl=number of lines in the file to be plotted.
+slow=real variable, instructs the system to wait 'real' seconds between successive plots.
+
+v.subroutine plot_trajectory3(filename,a,b,c,nl,slow)
+Plots trajectory of a point saved as in datafile using a:b:c as x,y,z(1,2,3).
+filename=file at which data is stored.
+a,b,c are integers
+nl=number of lines in the file to be plotted.
+slow=real variable, instructs the system to wait 'real' seconds between successive plots.
+
+
+
+4.special functions(specfun)
+
+i.following have programmer defined error tolerance.
+
+"d" prefix to indicate 10^(-8) error tolerance.
+Without "d" 10^(-4) error tolerance(works faster).
+
+bose(p,x) : p=order
+fermi(p,x) : p=order ,0<p<1 not supported yet 
+
+ii.following has 10^(-8) error tolerance.
+
+legendre_p(n,x) : n=order(integer), used method : recursion relation
+hermite(n,x) : n=order(integer) , used method : recursion relation
+sp_besselj(n,x) : n=order, used method : integral representation, Caution : Gives inaccurate value for high value of n due to wild oscillation of integrand.
+sinc(x)
+zeta(x)
+
+
+5.general utilities(genlib)
+
+i.interpolation:
+
+a.Subroutine dinterp(x,y,xdat(:),ydat(:)) :
+
+{x,y} sets of points are defined with xdat and ydat.
+Using value of x, value of y is obtained.
+
+Used method:
+Lagrange interpolation with nearest four points, two left and two right. For end points, nearest three points of only one side is used.
+
+ii.Inverse of a function
+
+function fun_inverse(f,x,xi,xf,h)
+
+f=original function to be inversed
+x=point at which inverse is to be calculated.
+xi,xf= original function's subdomain to be interpolated.
+h=increment, lower value takes more time to calculate but ensures higher accuracy. At present, there is no accuracy measure.
+
+Used method : data points x(:) and f(x(:)) (=y(:)) are taken from x=xi to xf with increment h. Then the value of inverse of x is obtained by interpolating the dataset {y,x}. So, the interpolation domain x'=[xi,xf] must include the value x=f(x')
+Dependency : dinterp
+
+iii.Sorting an array
+
+a. subroutine lsort(array)
+lsort sorts elements in ascending order. Method used : QuickSort
+b. subroutine hsort(array)
+hsort sorts elements in descending order. Method used : QuickSort
+
+iv.creating linearly spaced array
+
+function linspace(xi,xf,n)
+n=integer
+array=linspace(xi,xf,n) creates an array(n) with linearly spaced variables starting from xi to xf, with array index 1,2..n.
+
+v.trace of matrix
+function trace(a) gives trace of matrix a.
+
+vi.normalising a vector
+subroutine normalise(array) normalises array to 1.
+
+vii.root finding
+subroutine brent (f, x, x1, abserr, kmax)
+
+x,x1 should be two variables where f(x1) and f(x2) will have opposite signs. On exit, x converges to the root with tolerance=abserr. kmax denotes maximum number of allowed iterations.
+
+bugs: If the function has multpile roots within the interval, it will end up to any non predetermined root.
+
+viii.subroutine swap_a(a,b) swaps two arrays a and b.
+
+ix.subroutine swap_v(a,b) swaps two values a and b.
+
+x.subroutine busy(t) apparently stops program execution for time t seconds by overloading the processor.
+
+xi.subroutine append(a,b) appends array b to array a.(array a must be declared as allocatable)
+
+6.ODE solver(odelib)
+
+i.initial value solver
+
+a.subroutine ode1(f,xi,xf,yi,h,filename)
+
+Solver for : dy/dx=f(x,y(x))
+Method used : Explicit Runge-Kutta of order 4
+
+xi=initial x
+xf=final x
+yi=value of y at x=xi
+h=stepsize
+filename : name of file where the results are to be stored
+
+Results are stored in file in two columns {x,y}
+
+b.subroutine in_ode2(f,xi,xf,yi,dydxi,h,filename)
+
+Solver for : d2y/dx2=f(x,y(x),dy(x)/dx)
+Method used : Explicit Runge-Kutta of order 4
+
+xi=initial x
+xf=final x
+yi=value of y at x=xi
+dydxi=value of dy/dx at x=xi
+h=stepsize
+filename : name of file where the results are to be stored
+
+Results are stored in file in three columns {x,y,dy/dx}
+
+
+ii.boundary value solver
+
+a.subroutine bvp_ode2(f,xi,xf,yi,yf,h,filename)
+
+Solver for : d2y/dx2=f(x,y(x),dy(x)/dx)
+Method used : Explicit Runge-Kutta of order 4 and shooting method, followed by brent for finding root.
+
+xi=initial x
+xf=final x
+yi=value of y at x=xi
+yf=value of y at x=xf
+h=stepsize
+filename : name of file where the results are to be stored
+
+Results are stored in file in three columns {x,y,dy/dx}
+
+7.Statistical Library(statlib)
+
+i.function mean_a(dat),sd_a(dat) computes mean and s.d of the data stored in array dat(:).
+ii.function mean_f(f),sd_f(f) computes mean and s.d of the distribution function f(x), assumed to be normalised a priori.
+iii.function rand() gives uniform random number in the range [0,1]
+iv. function nrand() gives normally distributed random numbers. 
+************************************************************************************
+v.For producing random numbers from some given distribution:
+*****subroutine rand_func(x,y,random)***** gives a random variable random from distribution function f, and x and y are arrays, obtained from an auxiliary subroutine, given below.
+
+subroutine aux_rand_func(f,a,b,x,y) generates the two arrays x and y for generating the random variables,to be used in subroutine rand_func. f is the distribution function(need not be normalised, would be taken care of normalisation automatically) and a, b are the two endpoints of the range in which the random number will be generated.
+******Usage Details******
+******Declare the arrays x and y as allocatable, but ****don't allocate****.
+******the function f must be positive definite, if not, will give errors, that might be undetected.******
+************************************************************************************
+vi. subroutine prob_dist1(xi,x,prob,div) generates probability distribution from variable xi with values in xi(:) array. div is the number of divisions made in the whole range of xi as x(:). prob(:) gives the probabilty of xi lying between x(i) and x(i+1). x and y should have dimension div.
+
+8.Linear Algebra
+
+i.Eigenvalue and eigenvector
+**For general matrices
+
+a.subroutine gen_eig(a,b,c)
+a="non-symmetric" real matrix(won't work with symmetric matrix)
+b=complex matrix containing all eigenvectors
+c=complex array containing all the eigenvalues(ascending order)
+
+b.subroutine sym_eig(a,b,c)
+a="symmetric" real matrix(won't work with non-symmetric matrix)
+b=real matrix containing all eigenvectors
+c=real array containing all the eigenvalues(ascending order)
+
+**For sparse matrices, matrices are to be stored in csr format(row(:),column(:),elements(:)).
+
+c.subroutine gen_eigs(row,column,elements,dims,eig,vec,nout,string)
+**only use when eigenvalues and eigenvectors are known to be complex.
+
+row, column, elements are real arrays.
+dims is the dimesion of the matrix.
+nout is the number of eigenvalues and eigenvectors needed.
+eig is a complex array eig(nout),containing the eigenvalues.
+vec is a complex matrix vec(dimsnout),containing the eigenvectors.
+string : lr,sr,li,si for finding eigenvalues with largest and smallest real/imaginary part, one by one.
+
+
+
+c.subroutine sym_eigs(row,column,elements,dims,eig,vec,nout,string)
+**only use when eigenvalues and eigenvectors are known to be real.
+
+row, column, elements are real arrays.
+dims is the dimesion of the matrix.
+nout is the number of eigenvalues and eigenvectors needed.
+eig is a real array eig(nout),containing the eigenvalues.
+vec is a real matrix vec(dimsnout),containing the eigenvectors.
+string : sm lm for finding eigenvalues with largest and smallest magnitude, one by one.
+
+d.subroutine mat_inverse(a,b) inverts matrix a to b.(only square)
+
+e.function det(a) calculates determinant of matrix a.
+*****Caution:*****
+For using the determinant for further use, store the value within some variable and use that variable instead.
+eg: for finding inverse of the determinant of matrix a, use
+x=det(a)
+1/x
+
+But not 1/det(a)
+******************
+
+f.subroutine rand_mat,nrand_mat with argument(a) creates matrix a with [0,1] uniform and normally distributed random variables, respectively.
+
+g.subroutine rand_vec,nrand_vec with argument(a) creates vector a with [0,1] uniform and normally distributed random variables, respectively.
+
+h.subroutine sym_rand_mat,sym_nrand_mat with argument(a) creates symmetric matrix a with [0,1] uniform and normally distributed random variables, respectively.
+
+
+auxiliary.subroutine temp_cl()
+routine for removing all temporary files generated by gen_eig or sym_eig.
+
+
+
+9.Reading and Writing with datafiles
+****Caution****
+Maximum value of i supported=4
+Only square matrices are allowed.
+For reading part, declare the array as allocatable, but ***never*** allocate it inside main program.
+Always deallocate the allocated arrays before end to avoid memory leaks.
+***************
+
+
+i.subroutine mat_write(a,filename) writes a matrix a to the file filename(character).
+
+ii.subroutine mat_read(a,filename) reads a matrix a from the file filename(character).
+
+iii.subroutine vec_writei(a1......,ai,filename) reads/writes i number of arrays a1,..ai, given as arguments one by one(... part) to datafile filename(character). Replace i in vec_write"i" by number of arrays to be written.
+
+iv.subroutine vec_readi(a1......,ai,filename) reads/writes i number of arrays a1,..ai, given as arguments one by one(... part) from datafile filename(character). Replace i in vec_write"i" by number of arrays to be written.
+
+
+
+Limitations:
+
+
+1. Fermi(n,x) cant solve for 0<n<1.
+2. More support for datafile plotting needed in plotlib.
+3. sp_besselj inaccurate for high order function(n~15). 
+4. No PDE solver
+5. ODE solver currently limited to 2nd order equation.
+6. Complex matrix support needed in linear algebra part.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
